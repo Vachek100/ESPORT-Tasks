@@ -1,0 +1,58 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+{
+    config = "scripts/ai/deathmatch/bt_config.kv3"
+    
+    root = {
+        type = "decorator_bot_service"
+        memory_to_expire = [
+            {
+                key = "ShortTermAttackMemory"
+                time = 0.7
+                distance = 0
+            },
+            {
+                key = "LongTermMemory"
+                time = 10
+                distance = 500
+            }
+        ]
+        
+        child = {
+            type = "decorator_repeat"
+            
+            child = {
+                type = "decorator_sensor"
+                entity_type_filter = "PLAYERS"
+                team_filter = "ENEMY"
+                shape = {
+                    type = "sensor_shape_sphere"
+                    radius = 1500
+                }
+                output = "EnemyPlayer"
+                
+                child = {
+                    type = "condition_is_empty"
+                    input = "EnemyPlayer"
+                    negated = 1
+                    
+                    child = {
+                        type = "parallel"
+                        children = [
+                            {
+                                type = "action_aim"
+                                input = "EnemyPlayer"
+                                acquire_only = 1
+                            },
+                            {
+                                type = "action_move_to"
+                                destination = "EnemyPlayer"
+                                movement_type = "BT_ACTION_MOVETO_RUN"
+                                route_type = "BT_ACTION_MOVETO_FASTEST_ROUTE"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
